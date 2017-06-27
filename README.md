@@ -6,9 +6,9 @@
 ## Usage
 In order to use *DroidDucky* you have to have some kind of Android terminal emulator application. Lots of them can be found on the [Play Store](https://play.google.com/store/search?q=terminal%20emulator) (both free and paid). I’m currently using *JuiceSSH*, and I can recommend it. Also, you'll have to have a custom kernel with [android-keyboard-gadget](https://github.com/pelya/android-keyboard-gadget) support.
 
-Syntax is quite simple. Just run droidducky.sh with payload file name as the first argument. Make sure that droidducky.sh has execution permission.
+Syntax is quite simple. Just run droidducky.sh with payload file name as the last argument. You can specify the keyboard layout option with -k, for example a french layout *fr*. By default is *us*. Make sure that droidducky.sh has execution permission.
 
-    bash droidducky.sh payload.dd
+    bash droidducky.sh -k fr payload.duck
 
 ## Example
 You can try the payload code below.
