@@ -1,3 +1,4 @@
-STRING cmd
-DELAY 750
-STRING with command
+DELAY 3000
+REM <html>I win 10 dollars!</html>
+REM m,;:!?./§
+STRING <>

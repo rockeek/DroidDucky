@@ -3,6 +3,7 @@
 do_dry=0
 do_verbose=0
 duckfile=""
+key_layout="us" #default layout
 
 function usage() { echo "Usage: $0 [-d dryrun -h help -v verbose] <duckfile_to_execute>" 1>&2; exit 1; }
 
@@ -11,12 +12,13 @@ if [[ -z $1 ]]; then
 fi
 
 for duckfile; do true; done
-while getopts "dhv" opt
+while getopts d:h:v:k: opt
 do
     case $opt in
     (d) do_dry=1 ;;
     (v) do_verbose=1 ;;
     (h) usage ;;
+    (k) key_layout=${OPTARG} ;;
     (*) printf "Illegal option '-%s'\n" "$opt" && exit 1 ;;
     esac
 done
@@ -41,3 +43,4 @@ execute echo \"hello\"
 execute echo $myvar
 execute echo -e "\"$myvar\t\tRemote\n\n\tOK\""
 echo $duckfile
+echo Layout: $key_layout
