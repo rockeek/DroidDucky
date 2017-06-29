@@ -27,3 +27,6 @@ You can try the payload code below.
 
 ## Detailed info
 More information about this project, including implementation details can be found in the following blog post: [DroidDucky - Can an Android quack like a duck?](http://zx.rs/6/DroidDucky---Can-an-Android-quack-like-a-duck/).
+
+## Ideas ##
+Implement dry run. Hint: https://ragrawal.wordpress.com/2012/03/19/dry-run-in-shell-scripts/

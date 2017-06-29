@@ -3,9 +3,11 @@
 # DroidDucky
 # Simple Duckyscript interpreter in Bash. Based on android-keyboard-gadget and hid-gadget-test utility.
 #
+function usage() { echo "Usage: $0 [-d dryrun -h help -v verbose] <duckfile_to_execute>" 1>&2; exit 1; }
 # Usage: droidducky.sh payload_file.dd
 #
 # Copyright (C) 2015 - Andrej Budinčević <andrew@hotmail.rs>
+# Copyright (C) 2017 - Remy Chatti <rockeek@yahoo.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,12 +21,40 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+do_dry=0
+do_verbose=0
+duckfile=""
 defdelay=0
-kb="/dev/hidg0 keyboard"
-
+pipe="| ./hid-gadget-test /dev/hidg0 keyboard > /dev/null"
 last_cmd=""
 last_string=""
 line_num=0
+
+if [[ -z $1 ]]; then
+    usage
+fi
+for duckfile; do true; done #get last argument
+
+while getopts "dhv" opt
+do
+    case $opt in
+    (d) do_dry=1 ;;
+    (v) do_verbose=1 ;;
+    (h) usage ;;
+    (*) printf "Illegal option '-%s'\n" "$opt" && exit 1 ;;
+    esac
+done
+
+function execute(){
+    # if dry run is enabled then simply return 
+    (( do_dry && !do_verbose )) && echo "${@}"
+    (( !do_dry && do_verbose )) && echo "#${@}"
+     
+    (( do_dry )) && return 0
+        
+    # if dry run is disabled, then execute the command
+    eval "$@"
+}
 
 function convert() 
 {
@@ -143,8 +173,10 @@ function convert()
 	fi
 
 	echo "$kbcode"
-}
+} #function execute()
 
+
+(( do_dry )) && echo "#####dry mode#####"
 while IFS='' read -r line || [[ -n "$line" ]]; do
 	((line_num++))
 	read -r cmd info <<< "$line"
@@ -158,115 +190,115 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
 
 			if [ "$kbcode" != "" ]
 			then
-				echo "$kbcode" | ./hid-gadget-test $kb > /dev/null
+				execute "$kbcode $pipe"
 			fi
 		done
 	elif [ "$cmd" == "ENTER" ] 
 	then
 		last_cmd="enter"
-		echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+		execute "$last_cmd $pipe"
 	
 	elif [ "$cmd" == "DELAY" ] 
 	then
 		last_cmd="UNS"
 		((info = info*1000))
-		usleep $info
+		execute "usleep $info"
 
 	elif [ "$cmd" == "WINDOWS" -o "$cmd" == "GUI" ] 
 	then
 		last_cmd="left-meta ${info,,}"
-		echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+		execute "$last_cmd $pipe"
 
 	elif [ "$cmd" == "MENU" -o "$cmd" == "APP" ] 
 	then
 		last_cmd="menu"
-		echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+		execute "$last_cmd $pipe"
 
 	elif [ "$cmd" == "DOWNARROW" -o "$cmd" == "DOWN" ] 
 	then
 		last_cmd="down"
-		echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+		execute "$last_cmd $pipe"
 
 	elif [ "$cmd" == "LEFTARROW" -o "$cmd" == "LEFT" ] 
 	then
 		last_cmd="left"
-		echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+		execute "$last_cmd $pipe"
 
 	elif [ "$cmd" == "RIGHTARROW" -o "$cmd" == "RIGHT" ] 
 	then
 		last_cmd="right"
-		echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+		execute "$last_cmd $pipe"
 
 	elif [ "$cmd" == "UPARROW" -o "$cmd" == "UP" ] 
 	then
 		last_cmd="up"
-		echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+		execute "$last_cmd $pipe"
 
 	elif [ "$cmd" == "DEFAULT_DELAY" -o "$cmd" == "DEFAULTDELAY" ] 
 	then
 		last_cmd="UNS"
-		((defdelay = info*1000))
+		((defdelay = info*1000)) #todo
 
 	elif [ "$cmd" == "BREAK" -o "$cmd" == "PAUSE" ] 
 	then
 		last_cmd="pause"
-		echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+		execute "$last_cmd $pipe"
 
 	elif [ "$cmd" == "ESC" -o "$cmd" == "ESCAPE" ] 
 	then
 		last_cmd="escape"
-		echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+		execute "$last_cmd $pipe"
 
 	elif [ "$cmd" == "PRINTSCREEN" ] 
 	then
 		last_cmd="print"
-		echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+		execute "$last_cmd $pipe"
 
 	elif [ "$cmd" == "CAPSLOCK" -o "$cmd" == "DELETE" -o "$cmd" == "END" -o "$cmd" == "HOME" -o "$cmd" == "INSERT" -o "$cmd" == "NUMLOCK" -o "$cmd" == "PAGEUP" -o "$cmd" == "PAGEDOWN" -o "$cmd" == "SCROLLLOCK" -o "$cmd" == "SPACE" -o "$cmd" == "TAB" \
 	-o "$cmd" == "F1" -o "$cmd" == "F2" -o "$cmd" == "F3" -o "$cmd" == "F4" -o "$cmd" == "F5" -o "$cmd" == "F6" -o "$cmd" == "F7" -o "$cmd" == "F8" -o "$cmd" == "F9" -o "$cmd" == "F10" -o "$cmd" == "F11" -o "$cmd" == "F12" ] 
 	then
 		last_cmd="${cmd,,}"
-		echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+		execute "$last_cmd $pipe"
 
 	elif [ "$cmd" == "REM" ] 
 	then
-		echo "$info"
+		execute "$info"
 
 	elif [ "$cmd" == "SHIFT" ] 
 	then
 		if [ "$info" == "DELETE" -o "$info" == "END" -o "$info" == "HOME" -o "$info" == "INSERT" -o "$info" == "PAGEUP" -o "$info" == "PAGEDOWN" -o "$info" == "SPACE" -o "$info" == "TAB" ] 
 		then
 			last_cmd="left-shift ${info,,}"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		elif [ "$info" == *"WINDOWS"* -o "$info" == *"GUI"* ] 
 		then
 			read -r gui char <<< "$info"
 			last_cmd="left-shift left-meta ${char,,}"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		elif [ "$info" == "DOWNARROW" -o "$info" == "DOWN" ] 
 		then
 			last_cmd="left-shift down"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		elif [ "$info" == "LEFTARROW" -o "$info" == "LEFT" ] 
 		then
 			last_cmd="left-shift left"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		elif [ "$info" == "RIGHTARROW" -o "$info" == "RIGHT" ] 
 		then
 			last_cmd="left-shift right"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		elif [ "$info" == "UPARROW" -o "$info" == "UP" ] 
 		then
 			last_cmd="left-shift up"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		else
-			echo "($line_num) Parse error: Disallowed $cmd $info"
+			execute "($line_num) Parse error: Disallowed $cmd $info"
 		fi
 
 	elif [ "$cmd" == "CONTROL" -o "$cmd" == "CTRL" ] 
@@ -274,26 +306,26 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
 		if [ "$info" == "BREAK" -o "$info" == "PAUSE" ] 
 		then
 			last_cmd="left-ctrl pause"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		elif [ "$info" == "F1" -o "$info" == "F2" -o "$info" == "F3" -o "$info" == "F4" -o "$info" == "F5" -o "$info" == "F6" -o "$info" == "F7" -o "$info" == "F8" -o "$info" == "F9" -o "$info" == "F10" -o "$info" == "F11" -o "$info" == "F12" ] 
 		then
 			last_cmd="left-ctrl ${cmd,,}"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		elif [ "$info" == "ESC" -o "$info" == "ESCAPE" ] 
 		then
 			last_cmd="left-ctrl escape"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		elif [ "$info" == "" ]
 		then
 			last_cmd="left-ctrl"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		else 
 			last_cmd="left-ctrl ${info,,}"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 		fi
 
 	elif [ "$cmd" == "ALT" ] 
@@ -302,53 +334,53 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
 		-o "$info" == "F1" -o "$info" == "F2" -o "$info" == "F3" -o "$info" == "F4" -o "$info" == "F5" -o "$info" == "F6" -o "$info" == "F7" -o "$info" == "F8" -o "$info" == "F9" -o "$info" == "F10" -o "$info" == "F11" -o "$info" == "F12" ] 
 		then
 			last_cmd="left-alt ${info,,}"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		elif [ "$info" == "ESC" -o "$info" == "ESCAPE" ] 
 		then
 			last_cmd="left-alt escape"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		elif [ "$info" == "" ]
 		then
 			last_cmd="left-alt"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		else 
 			last_cmd="left-alt ${info,,}"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 		fi
 
 	elif [ "$cmd" == "ALT-SHIFT" ] 
 	then
 		last_cmd="left-shift left-alt"
-		echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+		execute "$last_cmd $pipe"
 
 	elif [ "$cmd" == "CTRL-ALT" ] 
 	then
 		if [ "$info" == "BREAK" -o "$info" == "PAUSE" ] 
 		then
 			last_cmd="left-ctrl left-alt pause"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		elif [ "$info" == "END" -o "$info" == "SPACE" -o "$info" == "TAB" -o "$info" == "DELETE" -o "$info" == "F1" -o "$info" == "F2" -o "$info" == "F3" -o "$info" == "F4" -o "$info" == "F5" -o "$info" == "F6" -o "$info" == "F7" -o "$info" == "F8" -o "$info" == "F9" -o "$info" == "F10" -o "$info" == "F11" -o "$info" == "F12" ] 
 		then
 			last_cmd="left-ctrl left-alt ${cmd,,}"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		elif [ "$info" == "ESC" -o "$info" == "ESCAPE" ] 
 		then
 			last_cmd="left-ctrl left-alt escape"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		elif [ "$info" == "" ]
 		then
 			last_cmd="left-ctrl left-alt"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		else 
 			last_cmd="left-ctrl left-alt ${info,,}"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 		fi
 
 	elif [ "$cmd" == "CTRL-SHIFT" ] 
@@ -356,33 +388,33 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
 		if [ "$info" == "BREAK" -o "$info" == "PAUSE" ] 
 		then
 			last_cmd="left-ctrl left-shift pause"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		elif [ "$info" == "END" -o "$info" == "SPACE" -o "$info" == "TAB" -o "$info" == "DELETE" -o "$info" == "F1" -o "$info" == "F2" -o "$info" == "F3" -o "$info" == "F4" -o "$info" == "F5" -o "$info" == "F6" -o "$info" == "F7" -o "$info" == "F8" -o "$info" == "F9" -o "$info" == "F10" -o "$info" == "F11" -o "$info" == "F12" ] 
 		then
 			last_cmd="left-ctrl left-shift ${cmd,,}"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		elif [ "$info" == "ESC" -o "$info" == "ESCAPE" ] 
 		then
 			last_cmd="left-ctrl left-shift escape"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		elif [ "$info" == "" ]
 		then
 			last_cmd="left-ctrl left-shift"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 
 		else 
 			last_cmd="left-ctrl left-shift ${info,,}"
-			echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+			execute "$last_cmd $pipe"
 		fi
 
 	elif [ "$cmd" == "REPEAT" ] 
 	then
 		if [ "$last_cmd" == "UNS" -o "$last_cmd" == "" ]
 		then
-			echo "($line_num) Parse error: Using REPEAT with DELAY, DEFAULTDELAY or BLANK is not allowed."
+			execute "($line_num) Parse error: Using REPEAT with DELAY, DEFAULTDELAY or BLANK is not allowed."
 		else
 			for ((  i=0; i<$info; i++  )); do
 				if [ "$last_cmd" == "STRING" ] 
@@ -392,20 +424,20 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
 
 						if [ "$kbcode" != "" ]
 						then
-							echo "$kbcode" | ./hid-gadget-test $kb > /dev/null
+							execute "$kbcode $pipe"
 						fi
 					done
 				else
-					echo "$last_cmd" | ./hid-gadget-test $kb > /dev/null
+					execute "$last_cmd $pipe"
 				fi
-				usleep $defdelay
+				execute "usleep $defdelay"
 			done
 		fi
 
 	elif [ "$cmd" != "" ] 
 	then
-		echo "($line_num) Parse error: Unexpected $cmd."
+		execute "($line_num) Parse error: Unexpected $cmd."
 	fi
 
-	usleep $defdelay
-done < "$1"
+	execute usleep $defdelay
+done < "$duckfile"

