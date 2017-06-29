@@ -48,13 +48,13 @@ done
 
 function toAzerty(){
 	#echo $1 | sed -e 'y/`123567890-=qwertyuiop[]asdfghjkl;\\êzxcvbnm,.\/~!@#$%^&*()_+QWERTYUIOP{}ASDFGHJKL:"|ÊZXCVBNM<>?/²&é"(-è_çà)=azertyuiop^$qsdfghjklm*<wxcvbn,;:!³1234567890°+AZERTYUIOP¨£QSDFGHJKLM%µ>WXCVBN?.\/§/' -e "y/4'/'ù/"
-	echo $1 | sed -e 'y/qawzAQZW/aqzwQAWZ/' -e "y/m,;:!?.\/§/;m,.\/M<>?/" #-e "y/m,;:!./;m,.\/</"
+	echo $1 | sed -e 'y/qawzAQZW/aqzwQAWZ/' -e "y/m,;:!?.\/§()$\-\"M/;m,.\/M<>?5-]63:/" #-e "y/;m,.\/</m,;:!./"
 } #function toAzerty
 
 function toLayout(){
 	case $key_layout in
-	(us) echo $1 ;;
-	(fr) echo $(toAzerty $1) ;;
+	(us) echo "$1" ;;
+	(fr) echo "$(toAzerty $1)" ;;
 	esac
 }
 
@@ -72,7 +72,9 @@ function execute(){
 function convert() {
 	local kbcode=""
 	
-	character=$(toLayout $1)
+	singleCharacter="$1" # trick to keep '*' integrity.
+	character="$(toLayout "$singleCharacter")"
+	
 	# echo "character before toLayout:$1"
 	# echo "character:$character"
 	if [ "$1" == " " ] #toLayout discards the space
@@ -457,5 +459,5 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
 		execute "echo ($line_num) Parse error: Unexpected $cmd."
 	fi
 
-	execute usleep $defdelay
+	execute "usleep $defdelay"
 done < "$duckfile"
