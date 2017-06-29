@@ -1,4 +1,4 @@
 DELAY 3000
 REM <html>I win 10 dollars!</html>
-REM those characters are ok m,;:!?./§()$-"
-STRING M
+REM those characters are ok m,;:!?./§()$-"M012345679
+STRING M8

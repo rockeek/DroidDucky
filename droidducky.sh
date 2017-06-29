@@ -48,7 +48,7 @@ done
 
 function toAzerty(){
 	#echo $1 | sed -e 'y/`123567890-=qwertyuiop[]asdfghjkl;\\êzxcvbnm,.\/~!@#$%^&*()_+QWERTYUIOP{}ASDFGHJKL:"|ÊZXCVBNM<>?/²&é"(-è_çà)=azertyuiop^$qsdfghjklm*<wxcvbn,;:!³1234567890°+AZERTYUIOP¨£QSDFGHJKLM%µ>WXCVBN?.\/§/' -e "y/4'/'ù/"
-	echo $1 | sed -e 'y/qawzAQZW/aqzwQAWZ/' -e "y/m,;:!?.\/§()$\-\"M/;m,.\/M<>?5-]63:/" #-e "y/;m,.\/</m,;:!./"
+	echo $1 | sed -e 'y/qawzAQZW/aqzwQAWZ/' -e "y/m,;:!?.\/§()$\-\"M012345679/;m,.\/M<>?5-]63:)!@#$%^&(/" #-e "y/;m,.\/</m,;:!./"
 } #function toAzerty
 
 function toLayout(){

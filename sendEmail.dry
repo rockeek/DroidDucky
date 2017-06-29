@@ -107,7 +107,7 @@ echo t | ./hid-gadget-test /dev/hidg0 keyboard > /dev/null
 echo e | ./hid-gadget-test /dev/hidg0 keyboard > /dev/null
 echo semicolon | ./hid-gadget-test /dev/hidg0 keyboard > /dev/null
 echo 5 | ./hid-gadget-test /dev/hidg0 keyboard > /dev/null
-echo 0 | ./hid-gadget-test /dev/hidg0 keyboard > /dev/null
+echo left-shift 0 | ./hid-gadget-test /dev/hidg0 keyboard > /dev/null
 echo minus | ./hid-gadget-test /dev/hidg0 keyboard > /dev/null
 usleep 0
 echo enter | ./hid-gadget-test /dev/hidg0 keyboard > /dev/null
