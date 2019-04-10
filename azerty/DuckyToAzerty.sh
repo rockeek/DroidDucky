@@ -1,0 +1,2 @@
+#!/bin/bash
+sed -e 'y/`123567890-=qwertyuiop[]asdfghjkl;\\êzxcvbnm,.\/~!@#$%^&*()_+QWERTYUIOP{}ASDFGHJKL:"|ÊZXCVBNM<>?/²&é"(-è_çà)=azertyuiop^$qsdfghjklm*<wxcvbn,;:!³1234567890°+AZERTYUIOP¨£QSDFGHJKLM%µ>WXCVBN?.\/§/' -e "y/4'/'ù/" -e 's/DELQY/DELAY/g' -e 's/SPQCE/SPACE/g' -e 's/QLT/ALT/g'
